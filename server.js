@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const config = require("./config/db");
+const config = require("./config/config");
 
 const app = express();
 const userRoutes = require("./routes/user.routes");
@@ -22,5 +22,7 @@ app.use("/user", userRoutes);
 app.use("/equipment", equipmentRoutes);
 
 // Start server
-const port = process.env.PORT;
-app.listen(port, () => console.log(`Server started on port ${port}`));
+
+app.listen(config.port, () =>
+  console.log(`Server started on port ${config.port}`)
+);

@@ -22,6 +22,11 @@ const equipmentSchema = new mongoose.Schema({
   condition: { type: String },
   availabilityDates: { type: [String] },
   features: { type: String },
+  deliveryMode: {
+    type: String,
+    enum: ["Renter Pickup", "Owner Delivery", "Both"],
+    default: "Renter Pickup",
+  },
 });
 
 const Equipment = mongoose.model("Equipment", equipmentSchema);
