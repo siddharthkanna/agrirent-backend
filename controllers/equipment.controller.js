@@ -69,10 +69,56 @@ const deleteEquipment = async (req, res, next) => {
   }
 };
 
+const getPostingHistory = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const postings = await Equipment.find({ ownerId: userId });
+    res.json(postings);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getRentalHistory = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const rentals = await Equipment.find({ renterId: userId });
+    res.json(rentals);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const rentEquipment = async (req, res, next) => {
+  const { equipmentId, renterId } = req.body;
+
+  try {
+    const equipment = await Equipment.findById(equipmentId);
+    if (!equipment) {
+      return res.status(404).json({ message: "Equipment not found" });
+    }
+
+    equipment.renterId = renterId;
+    equipment.isAvailable = false;
+
+    // Save the updated equipment
+    const updatedEquipment = await equipment.save();
+
+    res.json(updatedEquipment);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getAllEquipment,
   getEquipmentById,
   createEquipment,
   updateEquipment,
   deleteEquipment,
+  getPostingHistory,
+  getRentalHistory,
+  rentEquipment,
 };

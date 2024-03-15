@@ -1,26 +1,18 @@
 const mongoose = require("mongoose");
 
 const equipmentSchema = new mongoose.Schema({
+  id: mongoose.Schema.Types.ObjectId,
   name: { type: String, required: true },
   description: { type: String, required: true },
   category: { type: String, required: true },
   rentalPrice: { type: Number, required: true },
   location: { type: String, required: true },
-  images: [
-    {
-      type: String,
-    },
-  ],
-  ownerId: {
-    type: String,
-    required: true,
-  },
-  renterId: {
-    type: String,
-  },
+  images: [{ type: String }],
+  ownerId: { type: String, required: true },
+  renterId: { type: String },
   isAvailable: { type: Boolean, default: true },
   condition: { type: String },
-  availabilityDates: { type: [String] },
+  availabilityDates: [{ type: String }],
   features: { type: String },
   deliveryMode: {
     type: String,

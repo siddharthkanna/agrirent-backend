@@ -10,7 +10,6 @@ const UserController = {
       const user = await User.findOne({ googleId });
 
       if (!user) {
-        // If the user is not found, respond with an appropriate message
         return res.status(404).json({ message: "User not found" });
       }
 
@@ -42,7 +41,6 @@ const UserController = {
         email,
         photoURL,
         mobileNumber,
-        // Add other user-related fields as needed
       });
 
       // Save the user to the database
