@@ -1,6 +1,4 @@
-const nodemailer = require("nodemailer");
 const Equipment = require("../models/equipment.model");
-const User = require("../models/user.model");
 
 // Controller methods for equipment
 const getAllEquipment = async (req, res, next) => {
@@ -93,40 +91,6 @@ const getRentalHistory = async (req, res, next) => {
   }
 };
 
-const sendEmail = async (recipientEmail, subject, message) => {
-  try {
-    // Create a transporter using Mailtrap SMTP settings
-    let transporter = nodemailer.createTransport({
-      host: "bulk.smtp.mailtrap.io",
-      port: 587,
-      secure: false,
-      auth: {
-        user: "api",
-        pass: "3c3cb6928d3a4f9d01aaa638cff18028",
-      },
-    });
-
-    // Setup email data
-    let mailOptions = {
-      from: "sid.vinnu@gmail.com",
-      to: recipientEmail,
-      subject: subject,
-      text: message,
-    };
-
-    // Send email
-    let info = await transporter.sendMail(mailOptions);
-    console.log("Message sent: %s", info.messageId);
-  } catch (error) {
-    console.error("Error sending email:", error);
-    throw error; // Re-throw the error to be handled by the caller
-  }
-};
-
-module.exports = {
-  sendEmail,
-};
-
 const rentEquipment = async (req, res, next) => {
   const { equipmentId, renterId } = req.body;
 
@@ -136,33 +100,16 @@ const rentEquipment = async (req, res, next) => {
       return res.status(404).json({ message: "Equipment not found" });
     }
 
-    // Fetch renter details from the database
-    const renter = await User.findById(renterId);
-    if (!renter) {
-      return res.status(404).json({ message: "Renter not found" });
-    }
-
     equipment.renterId = renterId;
     equipment.isAvailable = false;
 
     // Save the updated equipment
     const updatedEquipment = await equipment.save();
 
-    // Send email to the renter
-    await sendEmail(
-      renter.email,
-      "Equipment Rental Confirmation",
-      "You have successfully rented equipment."
-    );
-
     res.json(updatedEquipment);
   } catch (err) {
     next(err);
   }
-};
-
-module.exports = {
-  rentEquipment,
 };
 
 module.exports = {
