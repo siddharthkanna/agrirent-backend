@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  name          String
+  phoneNumber   String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  equipments    Equipment[] @relation("UserEquipments")
+  rentals       Rental[]    @relation("UserRentals")
+}
+
+model Equipment {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  available   Boolean   @default(true)
+  ownerId     String
+  owner       User      @relation("UserEquipments", fields: [ownerId], references: [id])
+  rentals     Rental[]  @relation("EquipmentRentals")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Rental {
+  id          String    @id @default(uuid())
+  startDate   DateTime
+  endDate     DateTime
+  totalPrice  Float
+  status      String    @default("pending") // pending, active, completed, cancelled
+  userId      String
+  user        User      @relation("UserRentals", fields: [userId], references: [id])
+  equipmentId String
+  equipment   Equipment @relation("EquipmentRentals", fields: [equipmentId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+} 

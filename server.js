@@ -1,28 +1,28 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const config = require("./config/config");
+const cors = require("cors");
+require('dotenv').config();
 
 const app = express();
 const userRoutes = require("./routes/user.routes");
 const equipmentRoutes = require("./routes/equipment.routes");
 
-// Connect to MongoDB
-mongoose
-  .connect(config.uri)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error(err));
-
 // Middlewares
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Routes
-app.use("/user", userRoutes);
-app.use("/equipment", equipmentRoutes);
+app.use('/users', userRoutes);
+app.use('/equipment', equipmentRoutes);
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
 
 // Start server
-
-app.listen(config.port, () =>
-  console.log(`Server started on port ${config.port}`)
+const port = process.env.PORT || 3000;
+app.listen(port, () =>
+  console.log(`Server started on port ${port}`)
 );

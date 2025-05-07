@@ -2,25 +2,34 @@ const express = require("express");
 const router = express.Router();
 const equipmentController = require("../controllers/equipment.controller");
 
-// Route to add new equipment (posting)
-router.post("/addEquipment", equipmentController.createEquipment);
+// Equipment CRUD Operations
+// POST /equipment - Create new equipment
+router.post("/", equipmentController.createEquipment);
 
-// Route to delete equipment by ID
-router.delete(
-  "/deleteEquipment/:equipmentId",
-  equipmentController.deleteEquipment
-);
+// GET /equipment - Get all equipment
+router.get("/", equipmentController.getAllEquipment);
 
-// Route to rent equipment
-router.post("/rentEquipment", equipmentController.rentEquipment);
+// GET /equipment/available - Get available equipment
+router.get("/available", equipmentController.getAvailableEquipment);
 
-// Route to get all equipment (both postings and rentals)
-router.get("/allEquipment", equipmentController.getAllEquipment);
+// GET /equipment/:id - Get specific equipment
+router.get("/:id", equipmentController.getEquipment);
 
-// Route to fetch posting history for a user
-router.get("/postingHistory/:userId", equipmentController.getPostingHistory);
+// PUT /equipment/:id - Update equipment
+router.put("/:id", equipmentController.updateEquipment);
 
-// Route to fetch rental history for a user
-router.get("/rentalHistory/:userId", equipmentController.getRentalHistory);
+// DELETE /equipment/:id - Delete equipment
+router.delete("/:id", equipmentController.deleteEquipment);
+
+// User Equipment Management
+// GET /equipment/user/:userId - Get user's equipment listings
+router.get("/user/:userId", equipmentController.getPostingHistory);
+
+// Rental Management
+// POST /equipment/rent - Create new rental
+router.post("/rent", equipmentController.rentEquipment);
+
+// GET /equipment/rentals/:userId - Get user's rental history
+router.get("/rentals/:userId", equipmentController.getRentalHistory);
 
 module.exports = router;
