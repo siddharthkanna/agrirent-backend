@@ -1,11 +1,38 @@
 const userService = require('../services/user.service');
 
 const userController = {
-  createUser: async (req, res) => {
+  login: async (req, res) => {
     try {
-      const user = await userService.createUser(req.body);
-      res.status(201).json(user);
+      console.log('Login attempt - Request body:', req.body);
+      const { email, name, avatar } = req.body;
+
+      if (!email) {
+        console.log('Login failed - Email missing');
+        return res.status(400).json({ error: 'Email is required' });
+      }
+      console.log('Searching for user with email:', email);
+      let user = await userService.getUserByEmail(email);
+
+      if (!user) {
+        console.log('User not found, creating new user');
+        user = await userService.createUser({
+          email,
+          name: name || email.split('@')[0],
+          avatar
+        });
+        console.log('New user created:', user);
+      } else {
+        console.log('Existing user found:', user);
+      }
+
+      console.log('Login successful for user:', user.email);
+      res.json({
+        user,
+        message: user ? 'Login successful' : 'User created and logged in'
+      });
     } catch (error) {
+      console.error('Login error:', error);
+      console.error('Stack trace:', error.stack);
       res.status(400).json({ error: error.message });
     }
   },

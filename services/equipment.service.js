@@ -2,8 +2,37 @@ const prisma = require('../config/prisma');
 
 const equipmentService = {
   createEquipment: async (equipmentData) => {
+    const { 
+      name,
+      description,
+      category,
+      rentalPrice,
+      location,
+      images,
+      ownerId,
+      condition,
+      availabilityDates,
+      features,
+      deliveryMode
+    } = equipmentData;
+
     return prisma.equipment.create({
-      data: equipmentData,
+      data: {
+        name,
+        description,
+        category,
+        rentalPrice,
+        location,
+        images: images || [],
+        condition,
+        availabilityDates: availabilityDates || [],
+        features,
+        deliveryMode,
+        isAvailable: true,
+        owner: {
+          connect: { id: ownerId }
+        }
+      },
       include: {
         owner: true
       }
@@ -28,10 +57,13 @@ const equipmentService = {
     });
   },
 
-  getAvailableEquipment: async () => {
+  getAvailableEquipment: async (userId) => {
     return prisma.equipment.findMany({
       where: {
-        available: true
+        AND: [
+          { isAvailable: true },
+          { NOT: { ownerId: userId } }
+        ]
       },
       include: {
         owner: true
@@ -83,9 +115,7 @@ const equipmentService = {
   },
 
   rentEquipment: async (equipmentId, userId, startDate, endDate, totalPrice) => {
-    // Start a transaction to ensure data consistency
     return prisma.$transaction(async (tx) => {
-      // Check if equipment exists and is available
       const equipment = await tx.equipment.findUnique({
         where: { id: equipmentId }
       });
@@ -94,7 +124,7 @@ const equipmentService = {
         throw new Error('Equipment not found');
       }
 
-      if (!equipment.available) {
+      if (!equipment.isAvailable) {
         throw new Error('Equipment is not available for rent');
       }
 
@@ -117,7 +147,7 @@ const equipmentService = {
       // Update equipment availability
       await tx.equipment.update({
         where: { id: equipmentId },
-        data: { available: false }
+        data: { isAvailable: false }
       });
 
       return rental;

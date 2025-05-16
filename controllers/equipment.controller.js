@@ -3,7 +3,22 @@ const equipmentService = require('../services/equipment.service');
 const equipmentController = {
   createEquipment: async (req, res) => {
     try {
-      const equipment = await equipmentService.createEquipment(req.body);
+      const userId = req.user.id;
+      const equipmentData = {
+        name: req.body.name,
+        description: req.body.description,
+        category: req.body.category,
+        rentalPrice: req.body.rentalPrice,
+        location: req.body.location,
+        images: req.body.images,
+        ownerId: userId,
+        isAvailable: true,
+        condition: req.body.condition,
+        availabilityDates: req.body.availabilityDates,
+        features: req.body.features,
+        deliveryMode: req.body.deliveryMode,
+      }
+      const equipment = await equipmentService.createEquipment(equipmentData);
       res.status(201).json(equipment);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -13,6 +28,7 @@ const equipmentController = {
   getEquipment: async (req, res) => {
     try {
       const equipment = await equipmentService.getEquipmentById(req.params.id);
+      
       if (!equipment) {
         return res.status(404).json({ error: 'Equipment not found' });
       }
@@ -33,7 +49,8 @@ const equipmentController = {
 
   getAvailableEquipment: async (req, res) => {
     try {
-      const equipment = await equipmentService.getAvailableEquipment();
+      const userId = req.user.id;
+      const equipment = await equipmentService.getAvailableEquipment(userId);
       res.json(equipment);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -60,7 +77,8 @@ const equipmentController = {
 
   getPostingHistory: async (req, res) => {
     try {
-      const postings = await equipmentService.getPostingHistory(req.params.userId);
+      const userId = req.user.id;
+      const postings = await equipmentService.getPostingHistory(userId);
       res.json(postings);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -69,7 +87,8 @@ const equipmentController = {
 
   getRentalHistory: async (req, res) => {
     try {
-      const rentals = await equipmentService.getRentalHistory(req.params.userId);
+      const userId = req.user.id;
+      const rentals = await equipmentService.getRentalHistory(userId);
       res.json(rentals);
     } catch (error) {
       res.status(400).json({ error: error.message });

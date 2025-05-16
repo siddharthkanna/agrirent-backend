@@ -3,11 +3,8 @@ const router = express.Router();
 const userController = require("../controllers/user.controller");
 
 // User Management
-// POST /users/register - Register a new user
-router.post("/register", userController.createUser);
-
-// GET /users - Get all users
-router.get("/", userController.getAllUsers);
+// POST /users/login - Login a user
+router.post("/login", userController.login);
 
 // GET /users/:id - Get user profile
 router.get("/:id", userController.getUser);

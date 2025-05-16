@@ -22,16 +22,24 @@ model User {
 }
 
 model Equipment {
-  id          String    @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  available   Boolean   @default(true)
-  ownerId     String
-  owner       User      @relation("UserEquipments", fields: [ownerId], references: [id])
-  rentals     Rental[]  @relation("EquipmentRentals")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                String    @id @default(uuid())
+  name              String
+  description       String?
+  category          String?
+  rentalPrice       Float
+  location          String
+  images            String[]
+  ownerId          String
+  renterId         String?
+  isAvailable      Boolean   @default(true)
+  condition        String
+  availabilityDates String[]
+  features         String?
+  deliveryMode     String
+  owner            User      @relation("UserEquipments", fields: [ownerId], references: [id])
+  rentals          Rental[]  @relation("EquipmentRentals")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model Rental {
