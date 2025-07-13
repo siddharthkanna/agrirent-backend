@@ -15,6 +15,7 @@ model User {
   email         String      @unique
   name          String
   phoneNumber   String?
+  photoUrl      String?     // Added field for user's photo URL
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   equipments    Equipment[] @relation("UserEquipments")

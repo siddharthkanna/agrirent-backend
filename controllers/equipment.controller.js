@@ -4,21 +4,24 @@ const equipmentController = {
   createEquipment: async (req, res) => {
     try {
       const userId = req.user.id;
+      
       const equipmentData = {
         name: req.body.name,
         description: req.body.description,
         category: req.body.category,
-        rentalPrice: req.body.rentalPrice,
+        rentalPrice: req.body.rental_price,
         location: req.body.location,
         images: req.body.images,
         ownerId: userId,
         isAvailable: true,
         condition: req.body.condition,
-        availabilityDates: req.body.availabilityDates,
+        availabilityDates: req.body.availabile_dates,
         features: req.body.features,
-        deliveryMode: req.body.deliveryMode,
+        deliveryMode: req.body.delivery_mode,
       }
+
       const equipment = await equipmentService.createEquipment(equipmentData);
+      
       res.status(201).json(equipment);
     } catch (error) {
       res.status(400).json({ error: error.message });
